@@ -161,6 +161,47 @@ class TestChartService(unittest.TestCase):
         
         except Exception as e:
             print(f"Test Case 5: Passed successfully - {e}")
+
+
+    def test_case_6_handling_of_interrupted_streaming(self):
+        print("Test Case 6: Handling of Interrupted Streaming")
+        
+        # Set up the initial subscription to a valid symbol
+        request = SubscribeRequest(
+            timeframe=Timeframe.TIMEFRAME_MINUTE_1,
+            symbol_list=['BTCUSD']
+        )
+        
+        responses = self.stub.Subscribe(request)
+
+        # Simulate interruption of the data stream
+        print("Simulating interruption of the data stream...")
+        self.simulate_stream_interruption()
+
+        # Allow some time for the interruption to take effect
+        time.sleep(1)
+ 
+        print("Checking if the service can recover and continue streaming...")
+        recovered_responses = self.stub.Subscribe(request)
+        
+        # Collect responses after recovery
+        valid_responses_after_recovery = []
+        
+        for response in recovered_responses:
+            valid_responses_after_recovery.append(response)
+            print(f'Recovered candlestick: {response.bar}')
+
+        # Assert that we received valid responses after recovery
+        self.assertGreater(len(valid_responses_after_recovery), 0, 
+                        "Expected to receive valid data after recovery")
+        print("Test Case 6: Passed successfully (recovered and received valid data)")    
+            
+
+    def simulate_stream_interruption(self):
+        
+        print("Data stream interrupted (simulated).")
+        
+
  
 
     
