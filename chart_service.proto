@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package exinity.test;
+
+service ChartService {
+    rpc Subscribe(SubscribeRequest) returns (stream SubscribeResponse);
+}
+
+enum Timeframe {
+    TIMEFRAME_UNKNOWN = 0;
+    TIMEFRAME_MINUTE_1 = 1;
+}
+
+message SubscribeRequest {
+    Timeframe timeframe = 1;
+    repeated string symbol_list = 2;
+}
+
+message Candlestick {
+    uint64 timestamp_msec = 1;
+    double open = 2;
+    double high = 3;
+    double low = 4;
+    double close = 5;
+}
+
+message SubscribeResponse {
+    string symbol = 1;
+    Candlestick bar = 2;
+}
